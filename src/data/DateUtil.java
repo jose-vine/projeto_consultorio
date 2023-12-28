@@ -1,0 +1,43 @@
+package data;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+public final class DateUtil {
+
+	private static final String DATE_FORMAT = "dd/MM/yyyy";
+	private static final String DATETIME_FORMAT = DATE_FORMAT + " HH:mm:ss";
+
+	private DateUtil() {
+		
+	}
+
+	public static <T> T stringToDate(String date_text, Class<T> cls) {
+		Object date;
+
+		try {
+			if (cls == LocalDate.class)
+				date = LocalDate.parse(date_text, DateTimeFormatter.ofPattern(DATE_FORMAT));
+			else if (cls == LocalDateTime.class)
+				date = LocalDateTime.parse(date_text, DateTimeFormatter.ofPattern(DATETIME_FORMAT));
+			else
+				throw new RuntimeException(cls + " is not a valid type for this method!");
+		} catch (DateTimeParseException e) {
+			date = null;
+		}
+
+		return cls.cast(date);
+	}
+
+	public static <T> String dateToString(T date) {
+		if (date instanceof LocalDate)
+			return ((LocalDate) date).format(DateTimeFormatter.ofPattern(DATE_FORMAT));
+		else if (date instanceof LocalDateTime)
+			return ((LocalDateTime) date).format(DateTimeFormatter.ofPattern(DATETIME_FORMAT));
+		else
+			throw new RuntimeException(date.getClass() + " is not a valid type for this method!");
+	}
+
+}
